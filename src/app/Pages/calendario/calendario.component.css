@@ -1,0 +1,89 @@
+.asignar-card {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.titulo-card {
+  margin: 0 0 20px 0; /* <-- espacio debajo del título */
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap; /* Para pantallas chicas */
+}
+
+mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+h2 {
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #3f51b5; /* colorcito Material */
+}
+
+.tabla-container {
+  width: 100%;
+  overflow-x: auto; /* scroll si es necesario */
+}
+
+table {
+  max-width: 900px;  /* O el ancho que prefieras */
+  margin: 0 auto;    /* Centrar la tabla */
+  border-collapse: collapse;
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  padding: 8px 12px; /* menos padding para que se vea más ligera */
+  white-space: nowrap; /* evita que las fechas hagan salto raro */
+}
+
+mat-paginator {
+  margin-top: 10px;
+}
+
+mat-card {
+  max-width: 1000px;      /* ancho máximo cómodo */
+  margin: 20px auto;
+  padding: 16px 20px;     /* padding más amplio que la versión mini */
+}
+
+mat-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;    /* separación del título */
+  font-weight: 500;
+  color: #3f51b5;         /* color tipo Material */
+}
+
+.table-container {
+  overflow-x: auto;       /* scroll horizontal en pantallas pequeñas */
+}
+
+table {
+  width: 100%;
+  font-size: 1rem;        /* tamaño de texto legible */
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  padding: 10px 16px;     /* padding cómodo en celdas */
+  white-space: nowrap;
+}
+
+tr.mat-row,
+tr.mat-header-row {
+  height: 48px;           /* altura de fila cómoda */
+}
+
+mat-paginator {
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
