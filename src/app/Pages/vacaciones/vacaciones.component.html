@@ -1,0 +1,75 @@
+<mat-card class="asignar-card">
+  <h2 class="titulo-card">Asignar Vacaciones</h2>
+  <form (ngSubmit)="asignarVacacion()" #vacForm="ngForm" class="form-row">
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Guardia</mat-label>
+      <mat-select [(ngModel)]="nuevoVacacion.usuarioId" name="usuarioId" required>
+        <mat-option *ngFor="let u of usuarios" [value]="u.id">
+          {{u.nombre}} {{u.apellido}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+   <mat-form-field appearance="outline">
+  <mat-label>Fecha Inicio</mat-label>
+  <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="nuevoVacacion.fechaInicio" name="fechaInicio" required>
+  <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+  <mat-datepicker #pickerInicio></mat-datepicker>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Fecha Fin</mat-label>
+  <input matInput [matDatepicker]="pickerFin" [(ngModel)]="nuevoVacacion.fechaFin" name="fechaFin" required>
+  <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFin></mat-datepicker>
+</mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="vacForm.invalid">
+      Asignar
+    </button>
+  </form>
+</mat-card>
+
+<mat-card class="asignar-card">
+  <h2 class="titulo-card">Vacaciones Asignadas</h2>
+  <div class="tabla-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+      
+     <ng-container matColumnDef="usuario">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Guardia </th>
+  <td mat-cell *matCellDef="let vac">
+    {{ getNombreCompleto(vac.usuarioId) }}
+  </td>
+</ng-container>
+
+
+      <ng-container matColumnDef="fechaInicio">
+        <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
+        <td mat-cell *matCellDef="let vac">{{ vac.fechaInicio }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaFin">
+        <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
+        <td mat-cell *matCellDef="let vac">{{ vac.fechaFin }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+  <th mat-header-cell *matHeaderCellDef> Acciones </th>
+  <td mat-cell *matCellDef="let vac">
+    <button mat-icon-button color="primary" (click)="editarVacacion(vac)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" (click)="eliminarVacacion(vac.id)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </td>
+</ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</mat-card>

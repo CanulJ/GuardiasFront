@@ -32,7 +32,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 })
 export class InicioComponent {
 public obtenerLista: usuarios[] = [];
-  displayedColumns: string[] = ['id', 'nombre', 'apellido', 'correo', 'telefono'];  
+  displayedColumns: string[] = ['nombre', 'apellido', 'correo', 'telefono'];  
   dataSource!: MatTableDataSource<usuarios>;
 
   @ViewChild(MatSort) sort!: MatSort;
