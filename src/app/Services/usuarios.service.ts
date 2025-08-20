@@ -13,12 +13,23 @@ export class UsuariosService {
 
   constructor() {}
 
-  Lista() {
+  // Listar todos los usuarios
+  Lista(): Observable<usuarios[]> {
     return this.http.get<usuarios[]>(this.apiUrl);
   }
 
-  crear(objeto: usuarios) {
-  return this.http.post<usuarios>(this.apiUrl, objeto);
-}
+  // Crear un usuario
+  crear(usuario: usuarios): Observable<usuarios> {
+    return this.http.post<usuarios>(this.apiUrl, usuario);
+  }
 
+  // Actualizar un usuario
+  actualizar(id: number, usuario: usuarios): Observable<usuarios> {
+    return this.http.put<usuarios>(`${this.apiUrl}/${id}`, usuario);
+  }
+
+  // Eliminar un usuario
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

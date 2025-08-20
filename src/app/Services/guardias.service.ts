@@ -22,4 +22,13 @@ export class GuardiasService {
   crearGuardia(guardia: Guardia): Observable<Guardia> {
     return this.http.post<Guardia>(this.apiUrl, guardia);
   }
+
+  actualizarGuardia(id: number, guardia: Guardia): Observable<Guardia> {
+  return this.http.put<Guardia>(`${this.apiUrl}/${id}`, guardia);
+}
+
+eliminarGuardia(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/${id}`);
+}
+
 }

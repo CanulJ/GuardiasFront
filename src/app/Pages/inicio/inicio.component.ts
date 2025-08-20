@@ -32,7 +32,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 })
 export class InicioComponent {
 public obtenerLista: usuarios[] = [];
-  displayedColumns: string[] = ['nombre', 'apellido', 'correo', 'telefono'];  
+  displayedColumns: string[] = ['nombre', 'apellido', 'correo', 'telefono','acciones'];  
   dataSource!: MatTableDataSource<usuarios>;
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -72,5 +72,46 @@ public obtenerLista: usuarios[] = [];
       }
     });
   }
+
+// Editar un usuario
+editarUsuario(usuario: usuarios) {
+  const nuevoNombre = prompt('Nuevo nombre:', usuario.nombre);
+  const nuevoApellido = prompt('Nuevo apellido:', usuario.apellido);
+  const nuevoCorreo = prompt('Nuevo correo:', usuario.correo);
+  const nuevoTelefono = prompt('Nuevo teléfono:', usuario.telefono);
+
+  if (!nuevoNombre || !nuevoApellido || !nuevoCorreo || !nuevoTelefono) return;
+
+  const usuarioActualizado: usuarios = {
+    ...usuario,
+    nombre: nuevoNombre,
+    apellido: nuevoApellido,
+    correo: nuevoCorreo,
+    telefono: nuevoTelefono
+  };
+
+  this.usuariosService.actualizar(usuario.id, usuarioActualizado).subscribe({
+    next: (u) => {
+      const index = this.obtenerLista.findIndex(x => x.id === u.id);
+      if (index !== -1) this.obtenerLista[index] = u;
+      this.dataSource.data = this.obtenerLista;
+    },
+    error: (err) => console.error('Error al actualizar usuario:', err)
+  });
+}
+
+// Eliminar un usuario
+eliminarUsuario(id: number) {
+  if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
+
+  this.usuariosService.eliminar(id).subscribe({
+    next: () => {
+      this.obtenerLista = this.obtenerLista.filter(u => u.id !== id);
+      this.dataSource.data = this.obtenerLista;
+    },
+    error: (err) => console.error('Error al eliminar usuario:', err)
+  });
+}
+
 
 }
