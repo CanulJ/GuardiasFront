@@ -3,7 +3,9 @@
   max-width: 1000px;
   margin: 20px auto;
   padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.2); /* borde sutil tipo outline */
+  border-radius: 8px; /* esquinas redondeadas */
+  margin-bottom: 20px;
 }
 
 /* Títulos dentro de las cards */

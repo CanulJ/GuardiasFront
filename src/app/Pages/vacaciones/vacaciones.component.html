@@ -11,19 +11,19 @@
       </mat-select>
     </mat-form-field>
 
-   <mat-form-field appearance="outline">
-  <mat-label>Fecha Inicio</mat-label>
-  <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="nuevoVacacion.fechaInicio" name="fechaInicio" required>
-  <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
-  <mat-datepicker #pickerInicio></mat-datepicker>
-</mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Inicio</mat-label>
+      <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="nuevoVacacion.fechaInicio" name="fechaInicio" required>
+      <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+      <mat-datepicker #pickerInicio></mat-datepicker>
+    </mat-form-field>
 
-<mat-form-field appearance="outline">
-  <mat-label>Fecha Fin</mat-label>
-  <input matInput [matDatepicker]="pickerFin" [(ngModel)]="nuevoVacacion.fechaFin" name="fechaFin" required>
-  <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
-  <mat-datepicker #pickerFin></mat-datepicker>
-</mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Fin</mat-label>
+      <input matInput [matDatepicker]="pickerFin" [(ngModel)]="nuevoVacacion.fechaFin" name="fechaFin" required>
+      <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFin></mat-datepicker>
+    </mat-form-field>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="vacForm.invalid">
       Asignar
@@ -33,43 +33,73 @@
 
 <mat-card class="asignar-card">
   <h2 class="titulo-card">Vacaciones Asignadas</h2>
+
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <!-- Guardia -->
+    <mat-form-field appearance="outline" class="filtro-guardia">
+      <mat-label>Filtrar por Guardia</mat-label>
+      <mat-select (selectionChange)="filtrarPorGuardia($event.value)">
+        <mat-option [value]="0">Todos</mat-option>
+        <mat-option *ngFor="let u of usuarios" [value]="u.id">
+          {{ u.nombre }} {{ u.apellido }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Mes -->
+    <mat-form-field appearance="outline" class="filtro-mes">
+      <mat-label>Filtrar por Mes</mat-label>
+      <mat-select (selectionChange)="filtrarPorMes($event.value)">
+        <mat-option [value]="-1">Todos</mat-option>
+        <mat-option *ngFor="let mes of meses" [value]="mes.value">
+          {{ mes.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   <div class="tabla-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+      <!-- Guardia -->
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Guardia </th>
+        <td mat-cell *matCellDef="let vac">
+          {{ getNombreCompleto(vac.usuarioId) }}
+        </td>
+      </ng-container>
 
-      
-     <ng-container matColumnDef="usuario">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header> Guardia </th>
-  <td mat-cell *matCellDef="let vac">
-    {{ getNombreCompleto(vac.usuarioId) }}
-  </td>
-</ng-container>
-
-
+      <!-- Fecha Inicio -->
       <ng-container matColumnDef="fechaInicio">
         <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
         <td mat-cell *matCellDef="let vac">{{ vac.fechaInicio }}</td>
       </ng-container>
 
+      <!-- Fecha Fin -->
       <ng-container matColumnDef="fechaFin">
         <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
         <td mat-cell *matCellDef="let vac">{{ vac.fechaFin }}</td>
       </ng-container>
 
+      <!-- Acciones -->
       <ng-container matColumnDef="acciones">
-  <th mat-header-cell *matHeaderCellDef> Acciones </th>
-  <td mat-cell *matCellDef="let vac">
-    <button mat-icon-button color="primary" (click)="editarVacacion(vac)">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-icon-button color="warn" (click)="eliminarVacacion(vac.id)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </td>
-</ng-container>
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let vac">
+          <button mat-icon-button color="primary" (click)="editarVacacion(vac)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarVacacion(vac.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Filas -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
+    <!-- Paginador -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </div>
 </mat-card>

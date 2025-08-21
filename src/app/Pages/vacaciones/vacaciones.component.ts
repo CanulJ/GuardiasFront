@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { MatIconModule,} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,27 +20,41 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-vacaciones',
-  imports: [CommonModule, MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCardModule,
-    MatButtonModule,
-    MatBottomSheetModule,
-    MatIconModule,
-    MatTabsModule, FormsModule,MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule,MatFormFieldModule, MatInputModule, MatDatepickerModule],
+  imports: [
+    CommonModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule,
+    MatPaginatorModule, MatCardModule, MatButtonModule, MatBottomSheetModule,
+    MatIconModule, MatTabsModule, FormsModule, MatFormFieldModule, MatSelectModule,
+    FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule
+  ],
   templateUrl: './vacaciones.component.html',
   styleUrls: ['./vacaciones.component.css']
 })
 export class VacacionesComponent implements AfterViewInit {
   usuarios: usuarios[] = [];
   vacaciones: Vacaciones[] = [];
-  
+  filtroTexto: string = '';
+  filtroGuardiaId: number | null = null;
+  filtroMes: number | null = null; // <-- Filtro de mes
+
   nuevoVacacion: Vacaciones = { id: 0, usuarioId: 0, fechaInicio: '', fechaFin: '' };
-  
+
   displayedColumns: string[] = ['usuario', 'fechaInicio', 'fechaFin', 'acciones'];
   dataSource!: MatTableDataSource<Vacaciones>;
+
+  meses = [
+    { value: 0, nombre: 'Enero' },
+    { value: 1, nombre: 'Febrero' },
+    { value: 2, nombre: 'Marzo' },
+    { value: 3, nombre: 'Abril' },
+    { value: 4, nombre: 'Mayo' },
+    { value: 5, nombre: 'Junio' },
+    { value: 6, nombre: 'Julio' },
+    { value: 7, nombre: 'Agosto' },
+    { value: 8, nombre: 'Septiembre' },
+    { value: 9, nombre: 'Octubre' },
+    { value: 10, nombre: 'Noviembre' },
+    { value: 11, nombre: 'Diciembre' },
+  ];
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -55,6 +69,13 @@ export class VacacionesComponent implements AfterViewInit {
     this.cargarVacaciones();
   }
 
+    // --- Función auxiliar para convertir string "YYYY-MM-DD" a Date ---
+  parseFecha(fechaStr: string): Date {
+    const [anio, mes, dia] = fechaStr.split('-').map(Number);
+    return new Date(anio, mes - 1, dia); // mes-1 porque JS empieza desde 0
+  }
+
+
   ngAfterViewInit() {
     if (this.dataSource) {
       this.dataSource.sort = this.sort;
@@ -68,11 +89,11 @@ export class VacacionesComponent implements AfterViewInit {
 
   cargarVacaciones() {
     this.vacacionesService.getVacaciones().subscribe(data => {
-      // Filtramos cualquier vacación con id 0
       this.vacaciones = data.filter(v => v.id !== 0);
       this.dataSource = new MatTableDataSource(this.vacaciones);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
+      this.aplicarFiltros();
     });
   }
 
@@ -124,5 +145,47 @@ export class VacacionesComponent implements AfterViewInit {
   getNombreCompleto(usuarioId: number): string {
     const usuario = this.usuarios.find(u => u.id === usuarioId);
     return usuario ? `${usuario.nombre} ${usuario.apellido}` : 'Desconocido';
+  }
+aplicarFiltros() {
+  this.dataSource.filterPredicate = (data: Vacaciones, filter: string) => {
+    const search = JSON.parse(filter);
+
+    // Filtro por guardia
+    const coincideGuardia = search.guardiaId ? data.usuarioId === search.guardiaId : true;
+
+    // Filtro por mes (solo mes de inicio o fin)
+    let coincideMes = true;
+    if (search.mes !== null) {
+      const inicio = this.parseFecha(data.fechaInicio);
+      const fin = this.parseFecha(data.fechaFin);
+
+      coincideMes = inicio.getMonth() === search.mes || fin.getMonth() === search.mes;
+    }
+
+    // Solo aplicamos los dos filtros: guardia y mes
+    return coincideGuardia && coincideMes;
+  };
+
+  // Activar el filtro
+  this.dataSource.filter = JSON.stringify({
+    guardiaId: this.filtroGuardiaId,
+    mes: this.filtroMes
+  });
+}
+
+  filtrarPorGuardia(usuarioId: number) {
+    this.filtroGuardiaId = usuarioId === 0 ? null : usuarioId;
+    this.aplicarFiltros();
+  }
+
+  filtrarPorTexto(event: Event) {
+    const valor = (event.target as HTMLInputElement).value;
+    this.filtroTexto = valor.trim().toLowerCase();
+    this.aplicarFiltros();
+  }
+
+  filtrarPorMes(mes: number) {
+    this.filtroMes = mes === -1 ? null : mes;
+    this.aplicarFiltros();
   }
 }
